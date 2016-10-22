@@ -1,0 +1,76 @@
+body{
+/*    background:dodgerblue;*/
+    font-family: 'raleway',sans-serif;
+}
+@keyframes slideIn{
+    0%{
+        transform: translateX(-200%);
+    }
+}
+.header{
+    position: absolute;
+    height:12em;
+    width: 100%;
+    top:0;
+    left:0; 
+    right: 0;
+    text-align: center;
+    color: white;
+    background: dodgerblue;
+}
+.main{
+    margin-top: 12em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.searchbar{
+    width:100%;
+    max-width: 30em;
+    margin: auto;
+    border-radius: 10em;
+    text-align: center;
+    font-size: 1.3em;
+    padding-top: .5em;
+    border: .2em solid white;
+    padding-bottom: .5em;
+}
+.results{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.result{
+    display: flex;
+    margin: auto;
+    flex-direction: row;
+    height:5em;
+    width: 100%;
+    max-width:30em;
+    margin: 1em auto;
+    outline:.1em solid black;
+    animation: slideIn .3s;
+    transition: all .15s ease-in-out;
+}
+.result:hover{
+    outline: .3em solid rgb(0,255,0);
+    transition: all .15s ease-in-out;
+}
+.result_image{
+
+}
+.result div{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.result_title{
+    height: 100%;
+}
+.result_url{
+    margin: 0 auto;
+}
+
+

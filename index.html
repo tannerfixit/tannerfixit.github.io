@@ -1,16 +1,67 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="1504">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-  </style>
-</head>
-<body>
-<p class="p1">k</p>
-</body>
+    <head>
+        <link rel="stylesheet" href="main.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="header">
+            <h1>iFixit</h1>
+            <h3>Device Explorer</h3>
+            <input method = "get" type="text" class="searchbar" action="javascript" placeholder="Enter a device">
+        </div>
+        <div class="main">
+            <div class="results">
+<!--
+                <div class='result'>
+                    <img class='result_image'>
+                    <div>
+                        <h1 class='result_title'>iPhone</h1>
+                        <h3 class='result_url'>URL</h3>
+                    </div>
+                </div>
+-->
+            </div>
+        </div>
+        <script>
+            $(".searchbar").change(function(){
+                var ifixitAPI = "https://www.ifixit.com/api/2.0/suggest/"+$(".searchbar").val()+"?doctypes=device";
+                var request = $.ajax({
+                    url: ifixitAPI
+                })
+                
+                request.done(function(response) {
+                    console.log(response.results[0].display_title);
+                    console.log(response.results[0]);
+                    var length = response.results.length;
+                    $(".result").remove();
+                    for (i=0; i<length; i++){
+                        var image = response.results[i].image.thumbnail;
+                        var device = response.results[i].display_title;
+                        var url = response.results[i].url;
+                        var id= response.results[i].wikiid;
+                        console.log(id);
+                        $(".results").append("<div class='result' id="+id+"></div>");
+                        $("#"+id).append("<img class='result_image' src="+image+">");
+                        $(".result").hide();
+                        $("#"+id).css("animation-delay",".0"+i+"s");
+                        $("#"+id).append("<div></div>");
+                        $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
+//                        $("#"+id+" div").append("<h3 class='result_url'>"+url+"</h3>")
+                    }
+                    $(".result").fadeIn("slow");
+                })
+                
+                // If no internet connection
+                request.fail(function(msg){
+                    $(".result").remove();
+                    $(".results").append("<div class='result'><p>Oh no, it looks like the network is down</p></div>");
+                    $(".result").hide();
+                    $(".result").fadeIn("slow");
+                })
+                
+            })
+            
+        </script>
+    </body>
 </html>
