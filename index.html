@@ -29,6 +29,7 @@
         </div>
         <script>
             
+            // When the searchbar has new input
             $(".searchbar").change(function(){
                 $(".welcome").fadeOut("fast");
                 $(".explorer").fadeIn("fast");
@@ -46,17 +47,18 @@
                     for (i=0; i<length; i++){
                         var image = response.results[i].image.thumbnail;
                         var device = response.results[i].title;
-//                        var deviceID = device.replace(/ /g,"_");
                         var url = response.results[i].url;
                         var id= response.results[i].wikiid;
-                        populateResults(".results",image, device, id);
                         var items = JSON.parse(localStorage["items"]);
+                        // Call the function that makes the new HTML element (shouldve used react.js)
+                        populateResults(".results",image, device, id);
+                        // Add the "rotate" class to any item that has the same ID as the saved devices
                         for (x=0; x<items.length; x++){
                             console.log("here");
                             if (items[x][2] == id){
                                 $("#"+id+" .add").addClass("rotate");
                             }
-                }
+                        }
                     }
                     //Show the results that were just parsed on screen
                     $(".result").fadeIn("fast");
@@ -84,20 +86,23 @@
                             items.push([image,device,id]);
                             
                         }
-                        //Remove ID from array
+                        //Check for any duplicate ID's and remove one if they match
                         else{
                             items = jQuery.grep(items, function(value){
                                 return value[2] != id;
                             })
                         }
                         $(".bag").empty();
+                        
+                        // Call the function that creates the HTML for "My devices"
                         addToBag(items);
+                        
                         //Package up the array back into a string for localStorage
                         localStorage["items"] = JSON.stringify(items);
                     });
                 });
                 
-                // If no internet connection, jump to here
+                // If no internet connection, create this result
                 request.fail(function(msg){
                     $(".result").remove();
                     $(".results").append("<div class='result'><p>Something went wrong...</p></div>");
@@ -106,7 +111,7 @@
                 });
             });
             
-            // This 
+            // This is what makes a new "result"
             function populateResults(location, image, device, id){
                 $(location).append("<div class='result' id="+id+"></div>");
                 $("#"+id).append("<img class='result_image' src="+image+">");
@@ -114,8 +119,6 @@
                 $("#"+id).append("<div></div>");
                 $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
                 $("#"+id).append("<div class='add'><div></div><div></div></div>");
-                
-
             }
             
             // This is what takes the parsed items array and appends each "device" to the bag
@@ -131,12 +134,12 @@
                     $(".bag #"+id+1).empty();
                     $(".bag #"+id+1).append("<img class='result_image' src="+image+">");
                     $(".bag #"+id+1).append("<div></div>");
-//                    $(".bag #"+id).css("animation-delay",".0"+i+"s");
                     $(".bag #"+id+1+" div").append("<h2 class='result_title'>"+device+"</h2>");
                     $(".bag #"+id+1).append("<div class='add'><div></div><div></div></div>");
                     $(".bag #"+id+1+" .add").addClass("rotate");
                 }
                 
+                // Show the new items in your bag
                 $(".bagResult").fadeIn("fast");
                 
                 $(".bagResult").click(function(){
