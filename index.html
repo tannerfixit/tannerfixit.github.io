@@ -28,15 +28,20 @@
             <h3>My Devices</h3>
         </div>
         <script>
-            
             // When the searchbar has new input
             $(".searchbar").change(function(){
                 $(".welcome").fadeOut("fast");
                 $(".explorer").fadeIn("fast");
+                // Instance variables
                 var ifixitAPI = "https://www.ifixit.com/api/2.0/suggest/"+$(".searchbar").val()+"?doctypes=device";
                 var request = $.ajax({
                     url: ifixitAPI
-                });
+                });  
+                //LocalStorage setup if no array is found
+                if (!localStorage.items || localStorage.getItem("items")==null)
+                    localStorage.items = JSON.stringify([]); 
+                //Parse the string of data with JSON
+                var items = JSON.parse(localStorage["items"]);
                 
                 //Successful response from server
                 request.done(function(response) {
@@ -45,11 +50,12 @@
                     $(".results .result").remove();
                     //Parse the results from the server into useable objects
                     for (i=0; i<length; i++){
+                        // Instance variables
                         var image = response.results[i].image.thumbnail;
                         var device = response.results[i].title;
                         var url = response.results[i].url;
                         var id= response.results[i].wikiid;
-                        var items = JSON.parse(localStorage["items"]);
+                        
                         // Call the function that makes the new HTML element (shouldve used react.js)
                         populateResults(".results",image, device, id);
                         // Add the "rotate" class to any item that has the same ID as the saved devices
@@ -63,13 +69,6 @@
                     //Show the results that were just parsed on screen
                     $(".result").fadeIn("fast");
                     
-                    //LocalStorage setup if no array is found
-                    if (!localStorage.items || localStorage.getItem("items")==null)
-                        localStorage.items = JSON.stringify([]);
-                    
-                    //Parse the string of data with JSON
-                    var items = JSON.parse(localStorage["items"]);
-                    
                     //Add or remove an item from the array if a result is clicked
                     $(".result").click(function(){
                         var items = JSON.parse(localStorage["items"]);
@@ -80,21 +79,15 @@
                             var image = $(this).find("img").attr("src");;
                             var device = $("#"+id+" h2").html();
                             $(".bagResult").remove();
+                            // Check for any duplicates and remove them if a match is found
                             items = jQuery.grep(items, function(value){
                                 return value[2] != id;
                             })
                             items.push([image,device,id]);
-                            
                         }
-                        //Check for any duplicate ID's and remove one if they match
-                        else{
-                            items = jQuery.grep(items, function(value){
-                                return value[2] != id;
-                            })
-                        }
+                        // Reset the bag for the new array
                         $(".bag").empty();
-                        
-                        // Call the function that creates the HTML for "My devices"
+                        // Call the function that creates the HTML for the bag
                         addToBag(items);
                         
                         //Package up the array back into a string for localStorage
@@ -121,7 +114,7 @@
                 $("#"+id).append("<div class='add'><div></div><div></div></div>");
             }
             
-            // This is what takes the parsed items array and appends each "device" to the bag
+            // This is what takes the parsed "items" array and appends each "device" to the bag
             function addToBag(items){
                 for (i=0; i<items.length; i++){
                     var image = items[i][0];
@@ -130,7 +123,6 @@
                     if (!$("#"+id+1).length){
                         $(".bag").append("<div class='bagResult' id="+id+1+"></div>");
                     }
-                    
                     $(".bag #"+id+1).empty();
                     $(".bag #"+id+1).append("<img class='result_image' src="+image+">");
                     $(".bag #"+id+1).append("<div></div>");
@@ -138,10 +130,10 @@
                     $(".bag #"+id+1).append("<div class='add'><div></div><div></div></div>");
                     $(".bag #"+id+1+" .add").addClass("rotate");
                 }
-                
                 // Show the new items in your bag
                 $(".bagResult").fadeIn("fast");
                 
+                // If a bag item is clicked, this is what removes it
                 $(".bagResult").click(function(){
                     var id=$(this).attr("id");
                     //Add to the array
@@ -190,12 +182,13 @@
                     $("#devices").removeClass("selected");
             });
             
+            // If the iFixit logo is clicked, all items in your bag will be removed
             $(".header img").click(function(){
                 $(".bag div").remove();
                 localStorage.removeItem("items");
                 $(".result div").removeClass("rotate");
+                location.reload();
             });
-
         </script>
     </body>
 </html>
