@@ -173,13 +173,12 @@
             $("#explorer, .searchbar").click(function(){
                 $(".main").fadeIn("fast");
                 $(".bag").hide();
-                $("#explorer").addClass("selected")
+                $("#explorer").addClass("selected");
+                
                 if (!$(this).hasClass("searchbar")){
                     $(".welcome").fadeOut("fast");
-                    $("#explorer, #devices").removeClass("selected");
                 }
-                else
-                    $("#devices").removeClass("selected");
+                $("#devices").removeClass("selected");
             });
             
             // If the iFixit logo is clicked, all items in your bag will be removed
