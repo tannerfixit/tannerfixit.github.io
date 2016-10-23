@@ -6,8 +6,12 @@
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     </head>
     <body onload="loadTasks()">
+        <div class="welcome">
+            <h1>Welcome!</h1>
+            <h3>To start, enter a device you own in the searchbar above.</h3>
+        </div>
         <div class="header">
-            <h1>My iFixit Devices</h1>
+            <img class="logo" src="logo.png">
             
             <input method = "get" type="text" class="searchbar" action="javascript" placeholder="Enter a device">
             <div>
@@ -17,7 +21,8 @@
         </div>
         <div class="main">
             <div class="results">
-                <h3>Search for devices you own</h3>
+                <h3 class="explorer">Device Explorer</h3>
+
 <!--
                 <div class='result'>
                     <img class='result_image'>
@@ -30,11 +35,13 @@
             </div>
         </div>
         <div class="bag">
-            <h3>My Items</h3>
+            <h3>My Devices</h3>
         </div>
         <script>
             
             $(".searchbar").change(function(){
+                $(".welcome").fadeOut("fast");
+                $(".explorer").fadeIn("fast");
                 var ifixitAPI = "https://www.ifixit.com/api/2.0/suggest/"+$(".searchbar").val()+"?doctypes=device";
                 var request = $.ajax({
                     url: ifixitAPI
@@ -58,7 +65,7 @@
                     $(".result").fadeIn("fast");
                     
                     //LocalStorage setup if no array is found
-                    if (!localStorage.items)
+                    if (!localStorage.items || localStorage.getItem("items")==null)
                         localStorage.items = JSON.stringify([]);
                     
                     //Parse the string of data with JSON
@@ -66,17 +73,19 @@
                     
                     //Add or remove an item from the array if a result is clicked
                     $(".result").click(function(){
+                        var items = JSON.parse(localStorage["items"]);
                         var id=$(this).attr("id");
                         $("#"+id+" .add").toggleClass("rotate");
                         //Add to the array
                         if ($("#"+id+" .add").hasClass("rotate")){
-//                            var image = $(this+" .result_image").attr('src');
-//                            alert(image);
-//                            $(".main").append($("#"+id+" img").html());
                             var image = $(this).find("img").attr("src");;
                             var device = $("#"+id+" h2").html();
                             $(".bagResult").remove();
+                            items = jQuery.grep(items, function(value){
+                                return value[2] != id;
+                            })
                             items.push([image,device,id]);
+                            
                         }
                         //Remove ID from array
                         else{
@@ -84,7 +93,7 @@
                                 return value[2] != id;
                             })
                         }
-                        $(".bagResult").remove();
+                        $(".bag").empty();
                         addToBag(items);
                         //Package up the array back into a string for localStorage
                         localStorage["items"] = JSON.stringify(items);
@@ -100,24 +109,7 @@
                 });
             });
             
-            $(".header h1").click(function(){
-                localStorage.count = 0;
-            })
-            $(".header div h3:nth-child(2)").click(function(){
-                $(".main").hide();
-                $(".bag").fadeIn("fast");
-                $(this).addClass("selected");
-                $(".header div h3:nth-child(1)").removeClass("selected");
-            })
-            $(".header div h3:nth-child(1), .searchbar").click(function(){
-                $(".main").fadeIn("fast");
-                $(".bag").hide();
-                if (!$(this).hasClass("searchbar")){
-                    $(this).addClass("selected");
-                }
-                $(".header div h3:nth-child(2)").removeClass("selected");
-            });
-            
+            // This 
             function populateResults(location, image, device, id, response){
                 $(location).append("<div class='result' id="+id+"></div>");
                 $("#"+id).append("<img class='result_image' src="+image+">");
@@ -127,48 +119,75 @@
                 $("#"+id).append("<div class='add'><div></div><div></div></div>");
             }
             
+            // This is what takes the parsed items array and appends each "device" to the bag
             function addToBag(items){
                 for (i=0; i<items.length; i++){
                     var image = items[i][0];
                     var device = items[i][1];
                     var id = items[i][2];
-                    $(".bag").append("<div class='bagResult' id="+id+1+"></div>");
+                    if (!$("#"+id+1).length){
+                        $(".bag").append("<div class='bagResult' id="+id+1+"></div>");
+                    }
+                    
+                    $(".bag #"+id+1).empty();
                     $(".bag #"+id+1).append("<img class='result_image' src="+image+">");
                     $(".bag #"+id+1).append("<div></div>");
-                    $(".bag #"+id+1).css("animation-delay",".0"+i+"s");
+//                    $(".bag #"+id).css("animation-delay",".0"+i+"s");
                     $(".bag #"+id+1+" div").append("<h2 class='result_title'>"+device+"</h2>");
                     $(".bag #"+id+1).append("<div class='add'><div></div><div></div></div>");
                     $(".bag #"+id+1+" .add").addClass("rotate");
                 }
                 
                 $(".bagResult").fadeIn("fast");
+                
                 $(".bagResult").click(function(){
                     var id=$(this).attr("id");
                     //Add to the array
                     if ($("#"+id+" .add").hasClass("rotate")){
                         var image = $(this).find("img").attr("src");;
                         var device = $("#"+id+" h2").html();
-                        $(this).remove();
+                        $(".bag "+id).remove();
                         var oldID = id.slice(0,-1);
-                        $(".results #"+oldID).removeClass("rotate");
+                        $("#"+oldID+" .add").removeClass("rotate");
                     }
                     //Find item to remove from array
                     items = jQuery.grep(items, function(value){
                         return value[2]+1 != id;
                     })
+                    $(".bag div").remove();
+                    addToBag(items);
                     //Save new array in localStorage
                     localStorage["items"] = JSON.stringify(items);
                 });
-
             }
             
+            //Get the localStorage items and add them to your bag
             function loadTasks(){
                 if (localStorage.items)
                     var items = JSON.parse(localStorage.getItem("items"));
                 addToBag(items);
             }
             
-            $(".header h1").click(function(){
+            //Button Click Functions
+            $(".header div h3:nth-child(2)").click(function(){
+                $(".main").hide();
+                $(".bag").fadeIn("fast");
+                $(this).addClass("selected");
+                $(".welcome").fadeOut("fast");
+                $(".header div h3:nth-child(1)").removeClass("selected");
+            })
+            $(".header div h3:nth-child(1), .searchbar").click(function(){
+                $(".main").fadeIn("fast");
+                $(".bag").hide();
+                if (!$(this).hasClass("searchbar")){
+                    $(this).addClass("selected");
+                    $(".welcome").fadeOut("fast");
+                }
+                $(".header div h3:nth-child(2)").removeClass("selected");
+            });
+            
+            $(".header img").click(function(){
+                $(".bag div").remove();
                 localStorage.removeItem("items");
                 $(".result div").removeClass("rotate");
             });
