@@ -2,7 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="main.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="jquery.min.js"></script>
         <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
     </head>
     <body onload="loadTasks()">
@@ -46,7 +46,6 @@
                 //Successful response from server
                 request.done(function(response) {
                     var length = response.results.length;
-                    console.log(response.results[0]);
                     $(".results .result").remove();
                     //Parse the results from the server into useable objects
                     for (i=0; i<length; i++){
@@ -60,7 +59,6 @@
                         populateResults(".results",image, device, id);
                         // Add the "rotate" class to any item that has the same ID as the saved devices
                         for (x=0; x<items.length; x++){
-                            console.log("here");
                             if (items[x][2] == id){
                                 $("#"+id+" .add").addClass("rotate");
                             }
