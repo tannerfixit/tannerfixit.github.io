@@ -48,19 +48,24 @@
                     var length = response.results.length;
                     $(".results .result").remove();
                     //Parse the results from the server into useable objects
-                    for (i=0; i<length; i++){
-                        // Instance variables
-                        var image = response.results[i].image.thumbnail;
-                        var device = response.results[i].title;
-                        var url = response.results[i].url;
-                        var id= response.results[i].wikiid;
-                        
-                        // Call the function that makes the new HTML element (shouldve used react.js)
-                        populateResults(".results",image, device, id);
-                        // Add the "rotate" class to any item that has the same ID as the saved devices
-                        for (x=0; x<items.length; x++){
-                            if (items[x][2] == id){
-                                $("#"+id+" .add").addClass("rotate");
+                    if (length == 0){
+                        populateResults(".results",null,"No results for "+$(".searchbar").val(),null,null);
+                    }
+                    else{
+                        for (i=0; i<length; i++){
+                            // Instance variables
+                            var image = response.results[i].image.thumbnail;
+                            var device = response.results[i].title;
+                            var url = response.results[i].url;
+                            var id= response.results[i].wikiid;
+
+                            // Call the function that makes the new HTML element (shouldve used react.js)
+                            populateResults(".results",image, device, id);
+                            // Add the "rotate" class to any item that has the same ID as the saved devices
+                            for (x=0; x<items.length; x++){
+                                if (items[x][2] == id){
+                                    $("#"+id+" .add").addClass("rotate");
+                                }
                             }
                         }
                     }
@@ -101,7 +106,7 @@
                 // If no internet connection, create this result
                 request.fail(function(msg){
                     $(".result").remove();
-                    $(".results").append("<div class='result'><p>Something went wrong...</p></div>");
+                    $(".results").append("<div class='result' id='oops'><p>Something went wrong. Please check your connection</p></div>");
                     $(".result").hide();
                     $(".result").fadeIn("fast");
                 });
@@ -109,12 +114,21 @@
             
             // This is what makes a new "result"
             function populateResults(location, image, device, id){
-                $(location).append("<div class='result' id="+id+"></div>");
-                $("#"+id).append("<img class='result_image' src="+image+">");
-                $("#"+id).css("animation-delay",".0"+i+"s");
-                $("#"+id).append("<div></div>");
-                $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
-                $("#"+id).append("<div class='add'><div></div><div></div></div>");
+                // If no results, tell the user
+                if (id == null){
+                    $(location).append("<div class='result' id="+id+"></div>");
+                    $("#"+id).append("<div></div>");
+                    $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
+                }
+                // If there are results, append them to "results"
+                else{
+                    $(location).append("<div class='result' id="+id+"></div>");
+                    $("#"+id).append("<img class='result_image' src="+image+">");
+                    $("#"+id).css("animation-delay",".0"+i+"s");
+                    $("#"+id).append("<div></div>");
+                    $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
+                    $("#"+id).append("<div class='add'><div></div><div></div></div>");
+                }
             }
             
             // This is what takes the parsed "items" array and appends each "device" to the bag
