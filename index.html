@@ -85,6 +85,11 @@
                             })
                             items.push([image,device,id]);
                         }
+                        else{
+                            items = jQuery.grep(items, function(value){
+                                return value[2] != id;
+                            })
+                        }
                         // Reset the bag for the new array
                         $(".bag").empty();
                         // Call the function that creates the HTML for the bag
@@ -136,7 +141,7 @@
                 // If a bag item is clicked, this is what removes it
                 $(".bagResult").click(function(){
                     var id=$(this).attr("id");
-                    //Add to the array
+                    //Add to the array if "+" is present
                     if ($("#"+id+" .add").hasClass("rotate")){
                         var image = $(this).find("img").attr("src");;
                         var device = $("#"+id+" h2").html();
@@ -144,10 +149,11 @@
                         var oldID = id.slice(0,-1);
                         $("#"+oldID+" .add").removeClass("rotate");
                     }
-                    //Find item to remove from array
+                    //Find item to remove from array if "x" is present
                     items = jQuery.grep(items, function(value){
                         return value[2]+1 != id;
                     })
+                    // Reset the bag for new array
                     $(".bag div").remove();
                     addToBag(items);
                     //Save new array in localStorage

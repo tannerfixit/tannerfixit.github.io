@@ -62,6 +62,7 @@ body{
     max-height: 3.87em;
     padding: .5em;
     background-size: cover;
+    transition: all .3s ease-in-out;
 }
 .logo:hover{
     background:red;
