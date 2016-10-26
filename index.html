@@ -13,7 +13,7 @@
         <div class="header">
             <img class="logo" src="logo.png">
             
-            <input method = "get" type="text" class="searchbar" action="javascript" placeholder="Enter a device">
+            <input method = "get" type="text" class="searchbar" action="javascript"  placeholder="Enter a device">
             <div>
                 <h3 id="explorer">Device Explorer</h3>
                 <h3 id="devices"> My Devices</h3>
@@ -21,17 +21,16 @@
         </div>
         <div class="main">
             <div class="results">
-                <!--This will populate with the items from the API query-->
+                <!--API query reults will show up here-->
             </div>
         </div>
         <div class="bag">
-            <!--This will polulate with your saved devices -->
+            <!--Localstorage results will show up here-->
         </div>
         <script>
             // When the searchbar has new input
             $(".searchbar").change(function(){
                 $(".welcome").fadeOut("fast");
-                $(".explorer").fadeIn("fast");
                 // Instance variables
                 var ifixitAPI = "https://www.ifixit.com/api/2.0/suggest/"+$(".searchbar").val()+"?doctypes=device";
                 var request = $.ajax({
@@ -117,8 +116,7 @@
                 // If no results, tell the user
                 if (id == null){
                     $(location).append("<div class='result' id="+id+"></div>");
-                    $("#"+id).append("<div></div>");
-                    $("#"+id+" div").append("<h2 class='result_title'>"+device+"</h2>");
+                    $("#"+id).append("<h2 class='result_title'>"+device+"</h2>");
                 }
                 // If there are results, append them to "results"
                 else{
@@ -133,19 +131,27 @@
             
             // This is what takes the parsed "items" array and appends each "device" to the bag
             function addToBag(items){
-                for (i=0; i<items.length; i++){
-                    var image = items[i][0];
-                    var device = items[i][1];
-                    var id = items[i][2];
-                    if (!$("#"+id+1).length){
-                        $(".bag").append("<div class='bagResult' id="+id+1+"></div>");
+                // If there are any items to add
+                if (items.length != 0){
+                    for (i=0; i<items.length; i++){
+                        var image = items[i][0];
+                        var device = items[i][1];
+                        var id = items[i][2];
+                        if (!$("#"+id+1).length){
+                            $(".bag").append("<div class='bagResult' id="+id+1+"></div>");
+                        }
+                        $(".bag #"+id+1).empty();
+                        $(".bag #"+id+1).append("<img class='result_image' src="+image+">");
+                        $(".bag #"+id+1).append("<div></div>");
+                        $(".bag #"+id+1+" div").append("<h2 class='result_title'>"+device+"</h2>");
+                        $(".bag #"+id+1).append("<div class='add'><div></div><div></div></div>");
+                        $(".bag #"+id+1+" .add").addClass("rotate");
                     }
-                    $(".bag #"+id+1).empty();
-                    $(".bag #"+id+1).append("<img class='result_image' src="+image+">");
-                    $(".bag #"+id+1).append("<div></div>");
-                    $(".bag #"+id+1+" div").append("<h2 class='result_title'>"+device+"</h2>");
-                    $(".bag #"+id+1).append("<div class='add'><div></div><div></div></div>");
-                    $(".bag #"+id+1+" .add").addClass("rotate");
+                }
+                // Tell the user they don't have any items
+                else{
+                    $(".bag").append("<div class='bagResult' id='noBag'></div>");
+                    $(".bag div").append("<h2 class='result_title'>No devices selected</h2>");
                 }
                 // Show the new items in your bag
                 $(".bagResult").fadeIn("fast");
@@ -192,7 +198,6 @@
                 $(".main").fadeIn("fast");
                 $(".bag").hide();
                 $("#explorer").addClass("selected");
-                
                 if (!$(this).hasClass("searchbar")){
                     $(".welcome").fadeOut("fast");
                 }
