@@ -11,7 +11,10 @@
             <h3>To start, enter a device you own in the searchbar above.</h3>
         </div>
         <div class="header">
-            <img class="logo" src="logo.png">
+            <div class="logoReset">
+                <img class="logo" src="logo.png">
+                <h4 class="resetPopup">Clear bag</h4>
+            </div>
             
             <input method = "get" type="text" class="searchbar" action="javascript" content="user-scalable=0" placeholder="Enter a device">
             <div>
@@ -78,7 +81,7 @@
                         $("#"+id+" .add").toggleClass("rotate");
                         //Add to the array
                         if ($("#"+id+" .add").hasClass("rotate")){
-                            var image = $(this).find("img").attr("src");;
+                            var image = $(this).find("img").attr("src");
                             var device = $("#"+id+" h2").html();
                             $(".bagResult").remove();
                             // Check for any duplicates and remove them if a match is found
@@ -163,7 +166,7 @@
                     var id=$(this).attr("id");
                     //Add to the array if "+" is present
                     if ($("#"+id+" .add").hasClass("rotate")){
-                        var image = $(this).find("img").attr("src");;
+                        var image = $(this).find("img").attr("src");
                         var device = $("#"+id+" h2").html();
                         $(".bag "+id).remove();
                         var oldID = id.slice(0,-1);

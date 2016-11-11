@@ -47,7 +47,7 @@ body{
 .header div h3, .clear{
     margin: 0;
     width:100%;
-    height:3.87em;
+    height:4em;
     line-height: 4em;
     background: rgba(0,0,0,.3);
     transition: all .3s ease-in-out;
@@ -59,20 +59,39 @@ body{
 .header div h3:nth-child(2){
     border-bottom-right-radius: 4px;
 }
+.logoReset{
+    display: flex;
+    flex-direction: column;
+    transition: all .3s ease-in-out;
+}
 .logo{
-    max-height: 3.87em;
+    margin: auto;
+    max-height: 4em;
     padding: .5em;
     background-size: cover;
     transition: all .3s ease-in-out;
 }
-.logo:hover{
-    background:red;
-    border-radius: 10px;
+.logoReset:hover{
+    background:rgba(255,0,0,.9);
     transition: all .3s ease-in-out;
 }
 .header div h3:hover{
     background: rgba(0,0,0,.5);
     transition: all .3s ease-in-out;
+}
+.resetPopup{
+    opacity: 0;
+    position: absolute;
+    margin: auto;
+    left: 5em;
+    right:0;
+    top:3.6em;
+    width: 25%;
+    transition: all .3s ease-in-out;
+}
+.logoReset:hover .resetPopup{
+    opacity: 1;
+    transition: all .15s ease-in-out;
 }
 .main, .bag{
     margin-top: 14em;
@@ -190,9 +209,44 @@ textarea {
 @media screen and (max-width:1024px){
     .header{
         width: 100%;
-        height:20em;
+        height:22em;
         max-width: none;
     }
+    .logoReset{
+    display: flex;
+    flex-direction: column;
+    transition: all .3s ease-in-out;
+    }
+    .logo{
+        margin: auto;
+        max-height: 6em;
+        padding: .5em;
+        background-size: cover;
+        transition: all .3s ease-in-out;
+    }
+    .logoReset:hover{
+        background:rgba(255,0,0,.9);
+        transition: all .3s ease-in-out;
+    }
+    .header div h3:hover{
+        background: rgba(0,0,0,.5);
+        transition: all .3s ease-in-out;
+    }
+    .resetPopup{
+        opacity: 0;
+        position: absolute;
+        margin: auto;
+        left: 5em;
+        right:0;
+        top:5.2em;
+        width: 25%;
+        transition: all .3s ease-in-out;
+    }
+    .logoReset:hover .resetPopup{
+        opacity: 1;
+        transition: all .15s ease-in-out;
+    }
+    
     input[type='text'],
     input[type='number'],
     textarea {
@@ -216,7 +270,7 @@ textarea {
         line-height: 3em;
     }
     .main, .bag{
-        margin-top:20em;
+        margin-top:22.5em;
     }
     .result, .bagResult{
         max-width: none;
